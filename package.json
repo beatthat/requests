@@ -25,6 +25,6 @@
     "ncp": "^2.0.0",
     "mkdirp": "^0.5.1",
     "unity-serialization": "github:beatthat/unity-serialization#^0.0.1",
-    "unity-service": "github:beatthat/unity-service#^0.0.1"
+    "unity-services": "github:beatthat/unity-services#^0.0.1"
   }
 }

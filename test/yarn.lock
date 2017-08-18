@@ -1624,7 +1624,7 @@ unique-stream@^1.0.0:
 
 "unity-request@github:beatthat/unity-request":
   version "0.0.1"
-  resolved "https://codeload.github.com/beatthat/unity-request/tar.gz/e304ab5752b45cd1e6727de163ee6a6ff64db2ae"
+  resolved "https://codeload.github.com/beatthat/unity-request/tar.gz/20c07da4a851b489dd3c007bfb8ca8215265fbde"
   dependencies:
     mkdirp "^0.5.1"
     ncp "^2.0.0"

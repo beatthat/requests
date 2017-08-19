@@ -1,6 +1,6 @@
 {
   "name": "unity-request",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "services",
   "main": "index.js",
   "repository": {
@@ -27,6 +27,6 @@
     "unity-serialization": "github:beatthat/unity-serialization#^0.0.1",
     "unity-services": "github:beatthat/unity-services#^0.0.1",
     "unity-utils": "github:beatthat/unity-utils#^0.0.3",
-    "unity-utils-pool": "github:beatthat/unity-utils#^0.0.2"
+    "unity-utils-pool": "github:beatthat/unity-utils-pool#^0.0.2"
   }
 }

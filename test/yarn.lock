@@ -74,10 +74,6 @@ ast-types@0.8.12:
   version "0.8.12"
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.8.12.tgz#a0d90e4351bb887716c83fd637ebf818af4adfcc"
 
-ast-types@0.8.15:
-  version "0.8.15"
-  resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.8.15.tgz#8eef0827f04dff0ec8857ba925abe3fea6194e52"
-
 ast-types@0.9.6:
   version "0.9.6"
   resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.9.6.tgz#102c9e9e9005d3e7e3829bf0c4fa24ee862ee9b9"
@@ -1164,13 +1160,7 @@ object.pick@^1.2.0:
   dependencies:
     isobject "^3.0.1"
 
-once@^1.3.0:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/once/-/once-1.4.0.tgz#583b1aa775961d4b113ac17d9c50baef9dd76bd1"
-  dependencies:
-    wrappy "1"
-
-once@~1.3.0:
+once@^1.3.0, once@~1.3.0:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/once/-/once-1.3.3.tgz#b2e261557ce4c314ec8304f3fa82663e4297ca20"
   dependencies:
@@ -1310,20 +1300,11 @@ readable-stream@~1.1.9:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-recast@0.10.33:
+recast@0.10.33, recast@^0.10.10:
   version "0.10.33"
   resolved "https://registry.yarnpkg.com/recast/-/recast-0.10.33.tgz#942808f7aa016f1fa7142c461d7e5704aaa8d697"
   dependencies:
     ast-types "0.8.12"
-    esprima-fb "~15001.1001.0-dev-harmony-fb"
-    private "~0.1.5"
-    source-map "~0.5.0"
-
-recast@^0.10.10:
-  version "0.10.43"
-  resolved "https://registry.yarnpkg.com/recast/-/recast-0.10.43.tgz#b95d50f6d60761a5f6252e15d80678168491ce7f"
-  dependencies:
-    ast-types "0.8.15"
     esprima-fb "~15001.1001.0-dev-harmony-fb"
     private "~0.1.5"
     source-map "~0.5.0"
@@ -1601,16 +1582,16 @@ unique-stream@^1.0.0:
     mkdirp "^0.5.1"
     ncp "^2.0.0"
 
-"unity-request@github:beatthat/unity-request#0.0.9":
-  version "0.0.9"
-  resolved "https://codeload.github.com/beatthat/unity-request/tar.gz/f59adce4ee966d3d9f1e41833c9779e67abad9da"
+"unity-request@github:beatthat/unity-request#0.0.10":
+  version "0.0.10"
+  resolved "https://codeload.github.com/beatthat/unity-request/tar.gz/9bfcccad0b7ff940c3cfe879862dca046cea5bbb"
   dependencies:
     mkdirp "^0.5.1"
     ncp "^2.0.0"
     unity-pools "github:beatthat/unity-pools#^0.0.4"
     unity-serialization "github:beatthat/unity-serialization#^0.0.1"
     unity-services "github:beatthat/unity-services#^0.0.1"
-    unity-utils "github:beatthat/unity-utils#^0.0.3"
+    unity-utils "github:beatthat/unity-utils#^0.0.4"
 
 "unity-serialization@github:beatthat/unity-serialization#^0.0.1":
   version "0.0.1"
@@ -1627,16 +1608,16 @@ unique-stream@^1.0.0:
     ncp "^2.0.0"
     unity-utils "github:beatthat/unity-utils#0.0.1"
 
-"unity-utils@github:beatthat/unity-utils#^0.0.1":
+"unity-utils@github:beatthat/unity-utils#0.0.1":
   version "0.0.1"
   resolved "https://codeload.github.com/beatthat/unity-utils/tar.gz/e828dd4996b066998e0dc7909c2170bcabed8a53"
   dependencies:
     mkdirp "^0.5.1"
     ncp "^2.0.0"
 
-"unity-utils@github:beatthat/unity-utils#^0.0.3":
-  version "0.0.3"
-  resolved "https://codeload.github.com/beatthat/unity-utils/tar.gz/431c94c113a1d8a02cacbef806133890b2432062"
+"unity-utils@github:beatthat/unity-utils#^0.0.4":
+  version "0.0.4"
+  resolved "https://codeload.github.com/beatthat/unity-utils/tar.gz/0d5ee9d219d4567bfb8b98f5038a7f41ad1249bd"
   dependencies:
     mkdirp "^0.5.1"
     ncp "^2.0.0"

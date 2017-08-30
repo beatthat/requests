@@ -1,6 +1,6 @@
 {
   "name": "unity-request",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "services",
   "main": "index.js",
   "repository": {
@@ -19,14 +19,15 @@
   },
   "homepage": "https://github.com/beatthat/unity-request",
   "scripts": {
-    "postinstall": "node scripts/postinstall.js"
+    "postinstall": "node scripts/postinstall.js",
+    "install:test": "rm -f *.tgz && npm pack && cd test && npm run clean && npm install"
   },
   "dependencies": {
     "ncp": "^2.0.0",
     "mkdirp": "^0.5.1",
-    "unity-serialization": "github:beatthat/unity-serialization#^0.0.1",
-    "unity-services": "github:beatthat/unity-services#^0.0.1",
-    "unity-utils": "github:beatthat/unity-utils#^0.0.4",
-    "unity-pools": "github:beatthat/unity-pools#^0.0.5"
+    "unity-serialization": "beatthat/unity-serialization#semver:^0.0.1",
+    "unity-services": "beatthat/unity-services#semver:^0.0.4",
+    "unity-utils": "beatthat/unity-utils#semver:^0.0.5",
+    "unity-pools": "beatthat/unity-pools#semver:^0.0.5"
   }
 }

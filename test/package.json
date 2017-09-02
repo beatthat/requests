@@ -8,7 +8,7 @@
     "clean": "rm -rf node_modules yarn.lock package-lock.json Library Temp Assets"
   },
   "dependencies": {
-    "unity-requests": "../unity-requests-0.0.14.tgz"
+    "unity-requests": "../unity-requests-0.0.15.tgz"
   },
   "devDependencies": {
     "babel-core": "^5.8.23",

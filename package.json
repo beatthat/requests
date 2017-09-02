@@ -1,7 +1,7 @@
 {
-  "name": "unity-request",
-  "version": "0.0.12",
-  "description": "services",
+  "name": "unity-requests",
+  "version": "0.0.14",
+  "description": "A Request is an async op that may succeed, fail or be cancelled. Requests may also retrieve an item of arbitrary type.",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
   "dependencies": {
     "ncp": "^2.0.0",
     "mkdirp": "^0.5.1",
+    "unity-request-interfaces": "beatthat/unity-request-interfaces#semver:^0.0.1",
     "unity-serialization": "beatthat/unity-serialization#semver:^0.0.1",
     "unity-services": "beatthat/unity-services#semver:^0.0.4",
     "unity-utils": "beatthat/unity-utils#semver:^0.0.5",

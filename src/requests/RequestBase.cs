@@ -60,16 +60,16 @@ namespace BeatThat
 			BeforeCompletionCallback();
 
 			if(this.hasError) {
-				Actions.Exec(this.onError);
+				Exec(this.onError);
 			}
 			else if(this.status == RequestStatus.CANCELLED) {
-				Actions.Exec(this.onCancel);
+				Exec(this.onCancel);
 			}
 			else {
-				Actions.Exec(this.onSuccess);
+				Exec(this.onSuccess);
 			}
 				
-			Actions.Exec(this.callback);
+			Exec(this.callback);
 
 			ClearCallback();
 
@@ -128,7 +128,7 @@ namespace BeatThat
 				return;
 			}
 
-			Actions.Exec(this.StatusUpdated);
+			Exec(this.StatusUpdated);
 		}
 
 		public void Dispose() 
@@ -215,6 +215,13 @@ namespace BeatThat
 		protected Action onCancel { get; private set; }
 		
 		abstract protected void ExecuteRequest();
+
+		private static void Exec(Action a)
+		{
+			if(a != null) {
+				a();
+			}
+		}
 
 	}
 

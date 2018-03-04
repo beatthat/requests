@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace BeatThat
 {
-	/// Convenience base impl for Request interface
 	public abstract class RequestBase : Request, HasUploadProgress
 	{
 		public event Action StatusUpdated;
@@ -13,7 +12,7 @@ namespace BeatThat
 		{
 			this.debug = Requests.debugging;
 		}
-
+			
 		public bool isCancelled { get { return this.status == RequestStatus.CANCELLED; } }
 
 		public RequestStatus status { get; private set; }
@@ -69,7 +68,7 @@ namespace BeatThat
 			else {
 				Exec(this.onSuccess);
 			}
-
+				
 			Exec(this.callback);
 
 			ClearCallback();
@@ -101,7 +100,7 @@ namespace BeatThat
 		}
 
 		/// <summary>
-		/// For most requests, it is an error to call CompleteRequest when the status is already DONE or CANCELLED,
+		/// For most requests, it is an error to call CompleteRequest when the status is already DONE or CANCELLED, 
 		/// but some request types (like a local error) get marked status DONE as soon as they're created...
 		/// </summary>
 		protected bool allowCompleteFromCompletedStatus { get; set; }
@@ -132,14 +131,14 @@ namespace BeatThat
 			Exec(this.StatusUpdated);
 		}
 
-		public void Dispose()
+		public void Dispose() 
 		{
 			if(this.debug) {
 				Debug.Log("[" + Time.frameCount + "] " + GetType() + "::Dispose");
 			}
 
 			if(this.IsQueuedOrInProgress()) {
-				Cancel();
+				Cancel(); 
 			}
 
 			DisposeRequest();
@@ -156,7 +155,7 @@ namespace BeatThat
 			}
 
 			if(!this.IsQueuedOrInProgress()) {
-				return;
+				return; 
 			}
 
 			BeforeCancel();
@@ -214,7 +213,7 @@ namespace BeatThat
 		protected Action onSuccess { get; private set; }
 		protected Action onError { get; private set; }
 		protected Action onCancel { get; private set; }
-
+		
 		abstract protected void ExecuteRequest();
 
 		private static void Exec(Action a)

@@ -6,7 +6,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/beatthat/request.git"
+    "url": "git+https://github.com/beatthat/requests.git"
   },
   "files": [
     "index.js",
@@ -16,9 +16,9 @@
   "author": "larrykirschner@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/beatthat/request/issues"
+    "url": "https://github.com/beatthat/requests/issues"
   },
-  "homepage": "https://github.com/beatthat/request",
+  "homepage": "https://github.com/beatthat/requests",
   "scripts": {
     "postinstall": "node scripts/postinstall.js",
     "install:test": "npm pack && cp ${npm_package_name}-${npm_package_version}.tgz ${npm_package_name}-latest.tgz && cd test && npm run clean && npm install",
@@ -27,16 +27,21 @@
     "preinstall:test": "rm -f *.tgz",
     "cp:test2src": "cd test && node scripts/cp-test2src.js",
     "overwrite:test2src": "cd test && node scripts/overwrite-test2src.js",
-    "pub:tag": "git add -A && git commit -m ${npm_package_version} && git tag -a ${npm_package_version} -m ${npm_package_version} && git push origin master && git push origin ${npm_package_version}"
+    "pub:tag": "git add -A && git commit -m ${npm_package_version} && git tag -a ${npm_package_version} -m ${npm_package_version} && git push origin master && git push origin ${npm_package_version}",
+    "template:update": "node scripts/template-update.js",
+    "version": "git add -A",
+    "postversion": "git push && git push --tags && npm run clean"
   },
   "dependencies": {
     "ncp": "^2.0.0",
     "mkdirp": "^0.5.1",
-    "pools": "beatthat/pools#semver:^0.0.7",
-    "property-interfaces": "beatthat/property-interfaces#semver:^0.0.3",
-    "request-interfaces": "beatthat/request-interfaces#semver:^0.0.2",
-    "serializers": "beatthat/serializers#semver:^0.0.2",
-    "services": "beatthat/services#semver:^0.0.5",
-    "unity-npm-utils": "github:beatthat/unity-npm-utils"
-  }
+    "pools": "beatthat/pools#semver:^1.0.0",
+    "property-interfaces": "beatthat/property-interfaces#semver:^1.0.0",
+    "request-interfaces": "beatthat/request-interfaces#semver:^1.0.0",
+    "serializers": "beatthat/serializers#semver:^1.0.0",
+    "services": "beatthat/services#semver:^1.0.0",
+    "unity-npm-utils": "github:beatthat/unity-npm-utils#semver:^1.0.0",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {}
 }

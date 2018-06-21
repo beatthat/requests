@@ -1,6 +1,6 @@
 {
   "name": "requests",
-  "scope": "ape",
+  "scope": "beatthat",
   "version": "1.0.0",
   "description": "A Request is an async op that may succeed, fail or be cancelled. Requests may also retrieve an item of arbitrary type.",
   "main": "index.js",
@@ -11,7 +11,9 @@
   "files": [
     "index.js",
     "scripts",
-    "src"
+    "src",
+    "Runtime",
+    "Samples"
   ],
   "author": "larrykirschner@gmail.com",
   "license": "MIT",

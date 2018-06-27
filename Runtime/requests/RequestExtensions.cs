@@ -1,12 +1,10 @@
-using BeatThat.Pools;
-using BeatThat.Properties;
 using System;
 
 namespace BeatThat.Requests
 {
 
 
-	public static class RequestExtensions
+    public static class RequestExtensions
 	{
 		public static bool IsQueuedOrInProgress(this Request r)
 		{

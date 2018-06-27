@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using BeatThat.ConvertTypeExt;
 using BeatThat.Pools;
 using BeatThat.Serializers;
 using UnityEngine;
@@ -72,6 +73,14 @@ namespace BeatThat.Requests
 
 		protected bool ReadItem()
 		{
+            if(typeof(T) == typeof(string) && (this.itemReader == null && this.format == null)) {
+                T text;
+                if(this.www.downloadHandler.text.TryConvertTo<T>(out text)) {
+                    this.item = text;
+                    return true;
+                }
+            }
+
 			try {
 #pragma warning disable XS0001 // Find APIs marked as TODO in Mono
                 using (var s = new MemoryStream(this.www.downloadHandler.data))

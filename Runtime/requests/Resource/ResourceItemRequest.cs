@@ -1,12 +1,10 @@
-using BeatThat.Pools;
-using BeatThat.Properties;
-using UnityEngine;
 using System;
 using System.Collections;
+using UnityEngine;
 
 namespace BeatThat.Requests
 {
-	public class ResourceItemRequest<ItemType, ResourceType> : RequestBase, Request<ItemType> 
+    public class ResourceItemRequest<ItemType, ResourceType> : RequestBase, Request<ItemType> 
 		where ResourceType : UnityEngine.Object
 	{
 		public delegate ItemType AssetToItemDelegate(ResourceType asset);

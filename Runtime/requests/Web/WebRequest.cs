@@ -1,10 +1,9 @@
-using BeatThat.Properties;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace BeatThat.Requests
 {
-	public enum HttpVerb { GET = 0, POST = 1, HEAD = 3, CREATE = 4, PUT = 5, DELETE = 5 }
+    public enum HttpVerb { GET = 0, POST = 1, HEAD = 3, CREATE = 4, PUT = 5, DELETE = 5 }
 
 	public interface WebRequest : NetworkRequest, HasResponseCode, HasResponseText
 	{

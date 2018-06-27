@@ -1,12 +1,12 @@
-using BeatThat.Properties;
 using System;
+using BeatThat.Properties;
 using UnityEngine;
 
 
 namespace BeatThat.Requests
 {
-	/// Convenience base impl for Request interface
-	public abstract class RequestBase : Request, HasUploadProgress
+    /// Convenience base impl for Request interface
+    public abstract class RequestBase : Request, HasUploadProgress
 	{
 		public event Action StatusUpdated;
 

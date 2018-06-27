@@ -1,30 +1,29 @@
-using BeatThat.Pools;
-using BeatThat.Properties;
-using UnityEngine;
 using System;
+using BeatThat.Pools;
+using UnityEngine;
 
 namespace BeatThat.Requests
 {
-	
-	/// <summary>
-	/// Useful for when you want to create an adhoc request from (a series of) async calls.
-	/// 
-	/// Similar to js Promise in the sense that it works by its constructor taking callback function for Resolve(item) and Reject(err).
-	/// 
-	/// NOT like Promise in the sense that execution is deferred (until Request::Execute is called)
-	/// and does not currently support .then continuation syntax.
-	/// 
-	/// PromiseRequest is convenient because it can be used in places where you'd otherwise need to create a new Request implementation.
-	/// It does have some issues though:
-	/// 
-	/// 1) Generally glosses over handling of Request::Cancel (no mechanism provided to cancel internal execution if the Promise itself gets cancelled)
-	/// 
-	/// 2) (For the hyper allocation sensitive) Virtually impossible to use without creating allocating closures, 
-	/// although most situations where you'd use a Request there are going to be lots of allocations anyway.
-	/// 
-	/// 
-	/// </summary>
-	public class Promise<T> : RequestBase, Request<T>, HasResponseCode
+
+    /// <summary>
+    /// Useful for when you want to create an adhoc request from (a series of) async calls.
+    /// 
+    /// Similar to js Promise in the sense that it works by its constructor taking callback function for Resolve(item) and Reject(err).
+    /// 
+    /// NOT like Promise in the sense that execution is deferred (until Request::Execute is called)
+    /// and does not currently support .then continuation syntax.
+    /// 
+    /// PromiseRequest is convenient because it can be used in places where you'd otherwise need to create a new Request implementation.
+    /// It does have some issues though:
+    /// 
+    /// 1) Generally glosses over handling of Request::Cancel (no mechanism provided to cancel internal execution if the Promise itself gets cancelled)
+    /// 
+    /// 2) (For the hyper allocation sensitive) Virtually impossible to use without creating allocating closures, 
+    /// although most situations where you'd use a Request there are going to be lots of allocations anyway.
+    /// 
+    /// 
+    /// </summary>
+    public class Promise<T> : RequestBase, Request<T>, HasResponseCode
 	{
 		#region HasResponseCode implementation
 		/// <summary>

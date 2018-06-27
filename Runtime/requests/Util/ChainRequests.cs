@@ -1,10 +1,9 @@
-using BeatThat.Properties;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace BeatThat.Requests
 {
-	public class ChainRequests : RequestBase
+    public class ChainRequests : RequestBase
 	{
 		public ChainRequests Add(Request r)
 		{

@@ -1,10 +1,8 @@
-using BeatThat.Properties;
 using System;
-using UnityEngine;
 
 namespace BeatThat.Requests
 {
-	public class ProxyRequest : RequestBase, HasResponseCode
+    public class ProxyRequest : RequestBase, HasResponseCode
 	{
 		public ProxyRequest(Request r)
 		{

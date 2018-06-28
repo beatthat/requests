@@ -71,7 +71,9 @@ namespace BeatThat.Requests
 				Exec(this.onSuccess);
 			}
 
-			Exec(this.callback);
+            if(s != RequestStatus.CANCELLED || this.isCallbackOnCancelledEnabled) {
+                Exec(this.callback); 
+            }
 
 			ClearCallback();
 
@@ -170,12 +172,15 @@ namespace BeatThat.Requests
 		virtual protected void BeforeCancel() {}
 		virtual protected void AfterCancel() {}
 
-		public void Execute(Action callback = null)
+        public bool isCallbackOnCancelledEnabled { get; set; }
+
+		public void Execute(Action callback = null, bool callbackOnCancelled = false)
 		{
 			if(this.debug) {
 				Debug.Log("[" + Time.frameCount + "] " + GetType() + "::Execute");
 			}
 
+            this.isCallbackOnCancelledEnabled = callbackOnCancelled;
 			this.callback = callback;
 			ExecuteRequest();
 

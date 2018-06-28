@@ -1,32 +1,30 @@
-using BeatThat.Pools;
-using BeatThat.Properties;
 using System;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace BeatThat.Requests
 {
-	/// <summary>
-	/// Removes the closure verbage (and allocation) from this pattern:
-	/// 
-	/// public Request ServiceCall(Action<Request> callback) {
-	/// 	var req = // get a request;
-	/// 	req.Execute(() => { callback(req); });
-	/// 	return req;
-	/// }
-	/// 
-	/// ... using the pool, it changes to this:
-	/// 
-	/// public Request ServiceCall(Action<Request> callback) {
-	/// 	var req = // get a request;
-	/// 	req.Execute(callback); // NO MORE CLOSURE
-	/// 	return req;
-	/// }
-	/// 
-	/// ...probably not significant performancewise, since there are so many allocations involved in most Request usage,
-	/// but since Requests are so heavily used, added anyway.
-	/// </summary>
-	public static class RequestExecutionPool
+    /// <summary>
+    /// Removes the closure verbage (and allocation) from this pattern:
+    /// 
+    /// public Request ServiceCall(Action<Request> callback) {
+    /// 	var req = // get a request;
+    /// 	req.Execute(() => { callback(req); });
+    /// 	return req;
+    /// }
+    /// 
+    /// ... using the pool, it changes to this:
+    /// 
+    /// public Request ServiceCall(Action<Request> callback) {
+    /// 	var req = // get a request;
+    /// 	req.Execute(callback); // NO MORE CLOSURE
+    /// 	return req;
+    /// }
+    /// 
+    /// ...probably not significant performancewise, since there are so many allocations involved in most Request usage,
+    /// but since Requests are so heavily used, added anyway.
+    /// </summary>
+    public static class RequestExecutionPool
 	{
 		private static int m_createdCount;
 
@@ -190,11 +188,11 @@ namespace BeatThat.Requests
 			this.callback = null;
 		}
 
-		public void Execute(Request r, Action<Request> callback)
+		public void Execute(Request r, Action<Request> callback, bool callbackOnCancelled = false)
 		{
 			this.req = r;
 			this.callback = callback;
-			r.Execute(this.executeCallbackAction);
+            r.Execute(this.executeCallbackAction, callbackOnCancelled);
 		}
 
 		private void OnExecuteCallback()
@@ -232,11 +230,11 @@ namespace BeatThat.Requests
 			this.callback = null;
 		}
 
-		public void Execute(RequestType r, Action<RequestType> callback)
+		public void Execute(RequestType r, Action<RequestType> callback, bool callbackOnCancelled = false)
 		{
 			this.req = r;
 			this.callback = callback;
-			r.Execute(this.executeCallbackAction);
+            r.Execute(this.executeCallbackAction, callbackOnCancelled);
 		}
 
 		private void OnExecuteCallback()
@@ -277,11 +275,11 @@ namespace BeatThat.Requests
 			this.callback = null;
 		}
 
-		public void Execute(ListRequest<T> r, Action<ListRequest<T>> callback)
+        public void Execute(ListRequest<T> r, Action<ListRequest<T>> callback, bool callbackOnCancelled = false)
 		{
 			this.req = r;
 			this.callback = callback;
-			r.Execute(this.executeCallbackAction);
+            r.Execute(this.executeCallbackAction, callbackOnCancelled);
 		}
 
 		private void OnExecuteCallback()

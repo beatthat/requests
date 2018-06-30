@@ -1,12 +1,10 @@
-using BeatThat.Pools;
-using BeatThat.Properties;
+using System;
 using System.Collections;
 using UnityEngine;
-using System;
 
 namespace BeatThat.Requests
 {
-	public class LocalRequest: RequestBase 
+    public class LocalRequest: RequestBase 
 	{
 		/// <summary>
 		/// Create a local request with an optional execution time.
@@ -15,7 +13,7 @@ namespace BeatThat.Requests
 		/// If set > 0, then execution will take this duration instead of returning immediately.
 		/// This is not implemented to be efficient. It's a convenience for test scenarios.
 		/// </param>
-		public LocalRequest(float execDuration = 0f, string error = null) 
+        public LocalRequest(string error = null, float execDuration = 0f) 
 		{
 			this.allowCompleteFromCompletedStatus = true;
 			this.execDuration = execDuration;
@@ -70,10 +68,12 @@ namespace BeatThat.Requests
 		/// If set > 0, then execution will take this duration instead of returning immediately.
 		/// This is not implemented to be efficient. It's a convenience for test scenarios.
 		/// </param>
-		public LocalRequest(T item, float execDuration = 0f, string error = null) : base(execDuration, error)
+        public LocalRequest(T item, float execDuration = 0f, string error = null) : base(error, execDuration)
 		{
 			this.item = item;
 		}
+
+        public LocalRequest(string error = null, float execDuration = 0f) : base(error, execDuration) {}
 
 		public object GetItem() { return this.item; } 
 		public T item { get; private set; }

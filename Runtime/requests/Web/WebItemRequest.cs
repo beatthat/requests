@@ -32,14 +32,14 @@ namespace BeatThat.Requests
 		public Reader<T> format { get; set; }
         public ReadItemDelegate<T> itemReader { get; set; }
 
-		virtual public void Execute(Action<Request<T>> callback) 
+		virtual public void Execute(Action<Request<T>> callback, bool callbackOnCancelled = false) 
 		{
 			if(callback == null) {
 				Execute();
 				return;
 			}
 
-			RequestExecutionPool<T>.Get().Execute(this, callback);
+            RequestExecutionPool<T>.Get().Execute(this, callback, callbackOnCancelled);
 		}
 
 		sealed override protected void AfterDisposeWWW()

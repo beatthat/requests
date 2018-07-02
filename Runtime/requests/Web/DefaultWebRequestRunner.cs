@@ -1,37 +1,44 @@
-using BeatThat.Properties;
-using UnityEngine;
 using System.Collections;
 using BeatThat.Service;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace BeatThat.Requests
 {
-	
-	/// <summary>
-	/// TODO: make all (or most) WWWRequest's safe to dispose immediately following completion. Will require different handling of downloaded textures, audioclips, etc.
-	/// </summary>
-	[RegisterService(typeof(WebRequestRunner))]
+
+    /// <summary>
+    /// TODO: make all (or most) WWWRequest's safe to dispose immediately following completion. Will require different handling of downloaded textures, audioclips, etc.
+    /// </summary>
+    [RegisterService(typeof(WebRequestRunner))]
 	public class DefaultWebRequestRunner : MonoBehaviour, WebRequestRunner 
 	{
 		public bool m_logSend = 
-			#if BT_WEBREQUEST_LOG_SEND || UNITY_EDITOR
-			true;
-			#else
-			false;
-			#endif
-
+#if WEBREQUEST_LOG_SEND || (UNITY_EDITOR && !WEBREQUEST_LOG_SEND_DISABLED)
+            true;
+#else
+            false;
+#endif
+        
 		public bool m_logCompleted = 
-			#if BT_WEBREQUEST_LOG_COMPLETE || UNITY_EDITOR
-			true;
-			#else
-			false;
-			#endif
+#if WEBREQUEST_LOG_COMPLETE || (UNITY_EDITOR && !WEBREQUEST_LOG_COMPLETE_DISABLED)
+            true;
+#else
+            false;
+#endif
+        
+        public bool m_logResponses =
+#if WEBREQUEST_LOG_RESPONSES || (UNITY_EDITOR && !WEBREQUEST_LOG_RESPONSES_DISABLED)
+            true;
+#else
+            false;
+#endif
 
 		public bool m_disableLogError = 
-			#if BT_WEBREQUEST_DISABLE_LOG_ERROR 
-			true;
-			#else
-			false;
-			#endif
+#if WEBREQUEST_DISABLE_LOG_ERROR 
+            true;
+#else
+        false;
+#endif
 
 
 		public void Execute(WebRequest req)
@@ -101,12 +108,34 @@ namespace BeatThat.Requests
 				yield break;
 			}
 
-			if(m_logCompleted) {
+            if(m_logResponses) {
+                Debug.Log("[" + Time.frameCount + "] " + GetType() + " COMPLETED " + www.method + " '" + www.url 
+                          + "' [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
+                          + "\nresponse:\n" + Response2LogText(www));
+            }
+			else if(m_logCompleted) {
 				Debug.Log("[" + Time.frameCount + "] " + GetType() + " COMPLETED " + www.method + " '" + www.url + "' [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]");
 			}
 				
 			req.OnDone();
 		}
+
+
+        private string Response2LogText(UnityWebRequest www)
+        {
+            var contentType = www.GetResponseHeader("content-type");
+            if(string.IsNullOrEmpty(contentType)) {
+                return "[no content type]";
+            }
+            if(contentType.IndexOf("text", System.StringComparison.Ordinal) == -1
+               && contentType.IndexOf("json", System.StringComparison.Ordinal) == -1
+               && contentType.IndexOf("xml", System.StringComparison.Ordinal) == -1
+              ){
+                return contentType;
+            }
+            return www.downloadHandler.text;
+        }
 	}
+
 }
 

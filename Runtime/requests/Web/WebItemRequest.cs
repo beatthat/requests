@@ -20,12 +20,11 @@ namespace BeatThat.Requests
             this.itemReader = itemReader;
         }
 
-        [Obsolete("use constructor that requires only url")]public WebItemRequest(Reader<T> format, WebRequestRunner runner, string url, HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(runner, url, httpVerb, delay)
+        [Obsolete("use constructor that requires only url")]
+        public WebItemRequest(Reader<T> format, WebRequestRunner runner, string url, HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(runner, url, httpVerb, delay)
         {
             this.format = format;
         }
-
-       
 
 		public object GetItem() { return this.item; } 
 		public T item { get; protected set; }

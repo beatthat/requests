@@ -86,8 +86,10 @@ namespace BeatThat.Requests
 
 			if(!string.IsNullOrEmpty(www.error)) {
 				if(!m_disableLogError) {
-					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error executing " + www.method + " '" + www.url + "': " + www.error
-						+ " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]");
+					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error executing " + www.method 
+                                   + " '" + www.url + "': " + www.error 
+                                   + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
+                                   + ((m_logResponses)? Response2LogText(www): ""));
 				}
 				req.OnError(www.error);
 				yield break;
@@ -96,7 +98,8 @@ namespace BeatThat.Requests
 			if(!www.isDone) {
 				if(!m_disableLogError) {
 					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " req for url failed to complete [" + www.url + "] [" 
-						+ ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]");
+                                   + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
+                                   + ((m_logResponses) ? Response2LogText(www) : ""));
 				}
 				req.OnError("failed to complete request");
 				yield break;
@@ -104,6 +107,13 @@ namespace BeatThat.Requests
 
 			string error;
 			if(www.IsError(out error)) {
+                if (!m_disableLogError) {
+                    Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error response executing " + www.method
+                                   + " '" + www.url + "': " + error
+                                   + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
+                                   + ((m_logResponses) ? Response2LogText(www) : ""));
+                }
+
 				req.OnError(error);
 				yield break;
 			}

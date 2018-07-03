@@ -47,6 +47,8 @@ namespace BeatThat.Requests
 			StartCoroutine(DoExecute(req));
 		}
 
+        private static WaitForEndOfFrame WAIT_FOR_END_OF_FRAME = new WaitForEndOfFrame();
+
 		private IEnumerator DoExecute(WebRequest req)
 		{
 			if(req.delay > 0f) {
@@ -61,7 +63,9 @@ namespace BeatThat.Requests
 
 			var www = req.www;
 
-			var token = www.Send();
+#pragma warning disable 219
+            var token = www.SendWebRequest();
+#pragma warning restore 219
 
 			var timeStart = Time.realtimeSinceStartup;
 
@@ -74,7 +78,7 @@ namespace BeatThat.Requests
 #if UNITY_IOS
 			// TODO: Cannot be interrupted by WWW.Dispose() on iOS. Need to retest if this is necessary with WebRequest
 			while (req.status == RequestStatus.IN_PROGRESS && !www.isDone) { 
-				yield return new WaitForEndOfFrame(); // TODO: static
+                yield return WAIT_FOR_END_OF_FRAME; 
 			}
 #else
 			yield return token; 

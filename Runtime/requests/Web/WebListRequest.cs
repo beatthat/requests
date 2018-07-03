@@ -7,10 +7,17 @@ namespace BeatThat.Requests
 {
     public class WebListRequest<T> : WebRequestBase, ListRequest<T> where T : class
 	{
-		public WebListRequest(Reader<T> format, WebRequestRunner runner, string url,  HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(runner, url, httpVerb, delay)
+#pragma warning disable 618
+        [Obsolete]public WebListRequest(Reader<T> format, WebRequestRunner runner, string url,  HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(runner, url, httpVerb, delay)
 		{
 			this.format = format;
 		}
+#pragma warning restore 618
+
+        public WebListRequest(string url, HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(url, httpVerb, delay)
+        {
+            this.format = format;
+        }
 
 		public T[] items { get; protected set; }
 		public Reader<T> format { get; set; }

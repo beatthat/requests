@@ -54,7 +54,21 @@ namespace BeatThat.Requests
 		/// 	 Any attached disposible will be disposed when the promise ends (including by cancel)
 		/// 
 		/// </summary>
-		public delegate void ExecWithResolveOrReject(Action<T> resolve, Action<object> reject, Action cancel, Action<IDisposable> attach);
+		public delegate void ExecWithCancelAndAttachDelegate(Action<T> resolve, Action<object> reject, Action cancel, Action<IDisposable> attach);
+
+        /// <summary>
+        /// A delegate function that executes the request. 
+        /// MUST terminate by calling one of the passed in callback functions, resolve or reject.
+        /// This is a simpler version that doesn't provide 'cancel' or 'attach' callbacks (just for more concise code)
+        /// 
+        /// @param resolve - the outer action should call resolve with the request's result item (if the request is successful) 
+        /// 
+        /// @param reject - the outer action should call reject with an error message (if the request is a failure).
+        ///     The param type is object rather than string to enable support for secondary error info, e.g. web response codes.
+        /// 
+        /// </summary>
+        public delegate void ExecDelegate(Action<T> resolve, Action<object> reject);
+
 
 		/// <summary>
 		/// Creates a PromiseRequest similar to the JS model.
@@ -99,10 +113,15 @@ namespace BeatThat.Requests
 		/// </code>
 		/// </summary>
 		/// <param name="execDel">Exec del.</param>
-		public Promise(ExecWithResolveOrReject execDel)
+		public Promise(ExecWithCancelAndAttachDelegate execDel)
 		{
-			this.execDelegate = execDel;
+			this.execDelegateWithCancelAndAttach = execDel;
 		}
+
+        public Promise(ExecDelegate execDel)
+        {
+            this.execDelegate = execDel;
+        }
 
 		public object GetItem () { return this.item; }
 		public T item { get; private set; }
@@ -110,7 +129,12 @@ namespace BeatThat.Requests
 		protected override void ExecuteRequest ()
 		{
 			UpdateToInProgress();
-			this.execDelegate(this.OnResolve, this.OnReject, this.Cancel, this.OnAttach);
+            if(this.execDelegateWithCancelAndAttach != null) {
+                this.execDelegateWithCancelAndAttach(this.OnResolve, this.OnReject, this.Cancel, this.OnAttach);
+            }
+            else {
+                this.execDelegate(this.OnResolve, this.OnReject);
+            }
 		}
 
 		virtual protected void OnAttach(IDisposable d)
@@ -192,13 +216,15 @@ namespace BeatThat.Requests
 			RequestExecutionPool<T>.Get().Execute(this, callback);
 		}
 
-		protected ExecWithResolveOrReject execDelegate { get; set; }
+        protected ExecWithCancelAndAttachDelegate execDelegateWithCancelAndAttach { get; set; }
+        protected ExecDelegate execDelegate { get; set; }
+
 		protected ListPoolList<IDisposable> attached { get; set; }
 	}
 
 	public class Promise : Promise<object> 
 	{
-		public Promise(ExecWithResolveOrReject execDel) : base(execDel) {}
+		public Promise(ExecWithCancelAndAttachDelegate execDel) : base(execDel) {}
 	}
 
 	public static class PromiseRequest

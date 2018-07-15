@@ -4,6 +4,7 @@ using BeatThat.ConvertTypeExt;
 using BeatThat.Pools;
 using BeatThat.Serializers;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace BeatThat.Requests
 {
@@ -40,6 +41,14 @@ namespace BeatThat.Requests
 
             RequestExecutionPool<T>.Get().Execute(this, callback, callbackOnCancelled);
 		}
+
+        override public void Prepare() 
+        {
+            base.Prepare();
+            if(typeof(Texture).IsAssignableFrom(typeof(T))) {
+                www.downloadHandler = new DownloadHandlerTexture();
+            }
+        }
 
 		sealed override protected void AfterDisposeWWW()
 		{
@@ -78,6 +87,13 @@ namespace BeatThat.Requests
                     this.item = text;
                     return true;
                 }
+            }
+
+            if(typeof(Texture2D).IsAssignableFrom(typeof(T)) && this.www.downloadHandler as DownloadHandlerTexture != null) {
+                T texture;
+                (this.www.downloadHandler as DownloadHandlerTexture).texture.TryConvertTo<T>(out texture);
+                this.item = texture;
+                return true;
             }
 
 			try {

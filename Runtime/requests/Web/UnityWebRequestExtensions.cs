@@ -1,12 +1,11 @@
-using BeatThat.Pools;
-using BeatThat.Properties;
-using UnityEngine;
 using System;
+using BeatThat.Pools;
+using UnityEngine;
 using UnityEngine.Networking;
 
 namespace BeatThat.Requests
 {
-	public static class UnityWebRequestExtensions 
+    public static class UnityWebRequestExtensions 
 	{
 		public static bool TryGetJsonError(this UnityWebRequest req, out string error, bool ignoreContentType = false)
 		{

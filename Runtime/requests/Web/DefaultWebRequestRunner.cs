@@ -39,15 +39,16 @@ namespace BeatThat.Requests
 #else
         false;
 #endif
-
-
+        
 		public void Execute(WebRequest req)
 		{
 			req.OnQueued();
 			StartCoroutine(DoExecute(req));
 		}
 
+#pragma warning disable 414
         private static WaitForEndOfFrame WAIT_FOR_END_OF_FRAME = new WaitForEndOfFrame();
+#pragma warning restore 414
 
 		private IEnumerator DoExecute(WebRequest req)
 		{

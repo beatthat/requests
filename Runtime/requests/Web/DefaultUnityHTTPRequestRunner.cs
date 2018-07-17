@@ -9,8 +9,8 @@ namespace BeatThat.Requests
     /// <summary>
     /// TODO: make all (or most) WWWRequest's safe to dispose immediately following completion. Will require different handling of downloaded textures, audioclips, etc.
     /// </summary>
-    [RegisterService(typeof(WebRequestRunner))]
-	public class DefaultWebRequestRunner : MonoBehaviour, WebRequestRunner 
+    [RegisterService(typeof(UnityHTTPRequestRunner))]
+	public class DefaultUnityHTTPRequestRunner : MonoBehaviour, UnityHTTPRequestRunner 
 	{
 		public bool m_logSend = 
 #if WEBREQUEST_LOG_SEND || (UNITY_EDITOR && !WEBREQUEST_LOG_SEND_DISABLED)
@@ -40,7 +40,7 @@ namespace BeatThat.Requests
         false;
 #endif
         
-		public void Execute(WebRequest req)
+		public void Execute(UnityHTTPRequest req)
 		{
 			req.OnQueued();
 			StartCoroutine(DoExecute(req));
@@ -50,7 +50,7 @@ namespace BeatThat.Requests
         private static WaitForEndOfFrame WAIT_FOR_END_OF_FRAME = new WaitForEndOfFrame();
 #pragma warning restore 414
 
-		private IEnumerator DoExecute(WebRequest req)
+		private IEnumerator DoExecute(UnityHTTPRequest req)
 		{
 			if(req.delay > 0f) {
 				yield return new WaitForSeconds(req.delay);

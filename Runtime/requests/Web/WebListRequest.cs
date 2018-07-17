@@ -5,10 +5,10 @@ using UnityEngine;
 
 namespace BeatThat.Requests
 {
-    public class WebListRequest<T> : WebRequestBase, ListRequest<T> where T : class
+    public class WebListRequest<T> : WebRequest, ListRequest<T> where T : class
 	{
 #pragma warning disable 618
-        [Obsolete]public WebListRequest(Reader<T> format, WebRequestRunner runner, string url,  HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(runner, url, httpVerb, delay)
+        [Obsolete]public WebListRequest(Reader<T> format, UnityHTTPRequestRunner runner, string url,  HttpVerb httpVerb = HttpVerb.GET, float delay = 0f) : base(runner, url, httpVerb, delay)
 		{
 			this.format = format;
 		}

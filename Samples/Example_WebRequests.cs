@@ -28,7 +28,7 @@ public class Example_WebRequests : MonoBehaviour {
 
     public void GetNewDog()
     {
-        new WebItemRequest<DogItem>(DOG_API).Execute(result =>
+        new WebRequest<DogItem>(DOG_API).Execute(result =>
         {
             if(result.hasError) {
                 Debug.LogError("error loading dog data:" + result.error);
@@ -58,7 +58,7 @@ public class Example_WebRequests : MonoBehaviour {
         m_loadedImageUrl = m_imageURL;
         UpdateData(m_imageURL); // will disable the load button
 
-        new WebItemRequest<Texture2D>(m_imageURL).Execute(result =>
+        new WebRequest<Texture2D>(m_imageURL).Execute(result =>
         {
             if (result.hasError)
             {

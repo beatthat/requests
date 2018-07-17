@@ -35,11 +35,13 @@ namespace BeatThat.Requests
 				m_pool.RemoveAt(0);
 				return e;
 			}
-
-			if(++m_createdCount > 100) { 
-				Debug.LogWarning("[" + Time.frameCount + "] RequestExecutionPool::Get has created " 
-					+ m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
-			}
+            if (++m_createdCount % 100 == 0)
+            {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+                Debug.LogWarning("[" + Time.frameCount + "] RequestExecutionPool::Get has created "
+                    + m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
+#endif
+            }
 
 			return new RequestExecution();
 		}
@@ -47,8 +49,10 @@ namespace BeatThat.Requests
 		public static void Return(RequestExecution e)
 		{
 			if(m_pool.Contains(e)) {
-				Debug.LogWarning("ExecutionPool::Release called for a list that's already in the pool");
-				return;
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+                Debug.LogWarning("ExecutionPool::Release called for a list that's already in the pool");
+#endif
+                return;
 			}
 			e.Reset();
 			m_pool.Add(e);
@@ -73,10 +77,13 @@ namespace BeatThat.Requests
 				return e;
 			}
 
-			if(++m_createdCount > 100) { 
-				Debug.LogWarning("[" + Time.frameCount + "] RequestExecutionPool<" + typeof(T).Name + ">::Get has created " 
-					+ m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
-			}
+            if (++m_createdCount % 100 == 0)
+            {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+                Debug.LogWarning("[" + Time.frameCount + "] RequestExecutionPool<" + typeof(T).Name + ">::Get has created "
+                    + m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
+#endif
+            }
 
 			return new RequestExecution<T>();
 		}
@@ -84,8 +91,10 @@ namespace BeatThat.Requests
 		public static void Return(RequestExecution<T> e)
 		{
 			if(m_pool.Contains(e)) {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
 				Debug.LogWarning("ExecutionPool::Release called for a list that's already in the pool");
-				return;
+#endif
+                return;
 			}
 			e.Reset();
 			m_pool.Add(e);
@@ -111,11 +120,14 @@ namespace BeatThat.Requests
 				return e;
 			}
 
-			if(++m_createdCount > 100) { 
-				Debug.LogWarning("[" + Time.frameCount + "] RequestExecutionPool<" 
-					+ typeof(ItemType).Name + "," + typeof(RequestType).Name + ">::Get has created " 
-					+ m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
-			}
+            if (++m_createdCount % 100 == 0)
+            {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+                Debug.LogWarning("[" + Time.frameCount + "] RequestExecutionPool<"
+                    + typeof(ItemType).Name + "," + typeof(RequestType).Name + ">::Get has created "
+                    + m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
+#endif
+            }
 
 			return new RequestExecution<ItemType, RequestType>();
 		}
@@ -123,8 +135,10 @@ namespace BeatThat.Requests
 		public static void Return(RequestExecution<ItemType, RequestType> e)
 		{
 			if(m_pool.Contains(e)) {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
 				Debug.LogWarning("ExecutionPool::Release called for a list that's already in the pool");
-				return;
+#endif
+                return;
 			}
 			e.Reset();
 			m_pool.Add(e);
@@ -149,10 +163,13 @@ namespace BeatThat.Requests
 				return e;
 			}
 
-			if(++m_createdCount > 100) { 
-				Debug.LogWarning("[" + Time.frameCount + "] ListRequestExecutionPool<" + typeof(T).Name + ">::Get has created " 
-					+ m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
-			}
+            if (++m_createdCount % 100 == 0)
+            {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+                Debug.LogWarning("[" + Time.frameCount + "] ListRequestExecutionPool<" + typeof(T).Name + ">::Get has created "
+                    + m_createdCount + " pool objects. There may be a leak (a Request type that never calls completion callback?)");
+#endif
+            }
 
 			return new ListRequestExecution<T>();
 		}
@@ -160,8 +177,10 @@ namespace BeatThat.Requests
 		public static void Return(ListRequestExecution<T> e)
 		{
 			if(m_pool.Contains(e)) {
-				Debug.LogWarning("ExecutionPool::Release called for a list that's already in the pool");
-				return;
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+                Debug.LogWarning("ExecutionPool::Release called for a list that's already in the pool");
+#endif
+                return;
 			}
 			e.Reset();
 			m_pool.Add(e);
@@ -197,9 +216,11 @@ namespace BeatThat.Requests
 
 		private void OnExecuteCallback()
 		{
-			if(this.callback == null) {
+            if(this.callback == null) {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
 				Debug.LogWarning("[" + Time.frameCount + "] " + GetType() + "::OnExecuteCallback no callback set!");
-				Dispose();
+#endif
+                Dispose();
 				return;
 			}
 
@@ -240,8 +261,10 @@ namespace BeatThat.Requests
 		private void OnExecuteCallback()
 		{
 			if(this.callback == null) {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
 				Debug.LogWarning("[" + Time.frameCount + "] " + GetType() + "::OnExecuteCallback no callback set!");
-				Dispose();
+#endif
+                Dispose();
 				return;
 			}
 
@@ -285,8 +308,10 @@ namespace BeatThat.Requests
 		private void OnExecuteCallback()
 		{
 			if(this.callback == null) {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
 				Debug.LogWarning("[" + Time.frameCount + "] " + GetType() + "::OnExecuteCallback no callback set!");
-				Dispose();
+#endif
+                Dispose();
 				return;
 			}
 

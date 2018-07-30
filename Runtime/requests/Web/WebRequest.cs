@@ -374,8 +374,12 @@ namespace BeatThat.Requests
             }
             catch (Exception e)
             {
+#if UNITY_EDITOR || DEBUG_UNSTRIP
                 Debug.LogError("Failed to parse item results: url=" + this.www.url
-                    + ", response=" + this.www.downloadHandler.text + ", error=" + e.Message);
+                               + ", response=" + this.www.downloadHandler.text 
+                               + ", error=" + e.Message + "\n" + e.StackTrace);
+                
+#endif
 
                 this.error = "format";
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using BeatThat.NetworkNotifications;
 using BeatThat.Service;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -76,6 +77,10 @@ namespace BeatThat.Requests
 
 			req.OnSent();
 
+            if(!www.uri.IsFile) {
+                NetworkNotification.WebRequestStarted(www);
+            }
+
 #if UNITY_IOS
 			// TODO: Cannot be interrupted by WWW.Dispose() on iOS. Need to retest if this is necessary with WebRequest
 			while (req.status == RequestStatus.IN_PROGRESS && !www.isDone) { 
@@ -88,6 +93,13 @@ namespace BeatThat.Requests
 			if(req.status == RequestStatus.CANCELLED) {
 				yield break;
 			}
+
+            if(www.isNetworkError) {
+                NetworkNotification.WebRequestNetworkError(www);
+            }
+            else if(!www.uri.IsFile){
+                NetworkNotification.WebRequestReceivedResponse(www);
+            }
 
 			if(!string.IsNullOrEmpty(www.error)) {
 				if(!m_disableLogError) {

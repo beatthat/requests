@@ -13,7 +13,9 @@
     "scripts",
     "src",
     "Runtime",
-    "Samples"
+    "Samples",
+    "README.md",
+    "readmefiles"
   ],
   "author": "larrykirschner@gmail.com",
   "license": "MIT",
@@ -38,13 +40,16 @@
       "test-cp2src": "copies changes from 'test' package back to package src but does NOT delete removed files",
       "test-overwrite2src": "copies changes from 'test' package back to src. Deletes src before the copy, so effectively whatever is in test becomes the src",
       "npm version [patch|minor|major]": "after everything commited, use npm version to push a tagged release with bumped version"
-    }
+    },
+    "docs-generate": "node scripts/docs-generate.js"
   },
   "dependencies": {
     "convert-type-ext": "github:beatthat/convert-type-ext#semver:^1.0.0",
     "mkdirp": "^0.5.1",
     "ncp": "^2.0.0",
     "path": "^0.12.7",
+    "network-notifications": "beatthat/network-notifications#semver:^1.0.0",
+    "notifications": "beatthat/notifications#semver:^1.0.0",
     "pools": "beatthat/pools#semver:^1.0.0",
     "property-interfaces": "beatthat/property-interfaces#semver:^1.0.0",
     "request-interfaces": "beatthat/request-interfaces#semver:^1.0.0",

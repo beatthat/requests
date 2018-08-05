@@ -160,7 +160,14 @@ namespace BeatThat.Requests
               ){
                 return contentType;
             }
-            return www.downloadHandler.text;
+
+
+            var dh = www.downloadHandler as DownloadHandlerBuffer;
+            if(dh == null) {
+                return "content-length: " + www.GetResponseHeader("content-length");
+            }
+
+            return dh.text;
         }
 	}
 

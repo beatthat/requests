@@ -66,12 +66,23 @@ namespace BeatThat.Requests
 				throw new NotSupportedException(this.httpVerb.ToString()); // add later
 			}
 
-			if(m_headers != null) {
-				foreach(var h in m_headers) {
-					this.www.SetRequestHeader(h.Key, h.Value);
-				}
-			}
+            CopyHeadersTo(this.www);
 		}
+
+        protected void CopyHeadersTo(UnityWebRequest webRequest = null)
+        {
+            if(webRequest == null) {
+                webRequest = this.www;
+            }
+
+            if (m_headers != null)
+            {
+                foreach (var h in m_headers)
+                {
+                    webRequest.SetRequestHeader(h.Key, h.Value);
+                }
+            }
+        }
 
 		public Action<WebRequest> prepareDelegate { get; set; }
 

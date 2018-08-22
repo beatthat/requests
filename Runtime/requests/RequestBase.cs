@@ -189,7 +189,7 @@ namespace BeatThat.Requests
 			}
 		}
 
-		public void Send(Action onSuccess = null, Action onError = null, Action onCancel = null)
+        public void Send(Action onSuccess = null, Action onError = null, Action onCancel = null)
 		{
 			if(this.debug) {
 				Debug.Log("[" + Time.frameCount + "] " + GetType() + "::Send");

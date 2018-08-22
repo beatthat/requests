@@ -3,6 +3,7 @@ using BeatThat.Properties;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using BeatThat.CollectionsExt;
 
 namespace BeatThat.Requests
 {
@@ -84,6 +85,11 @@ namespace BeatThat.Requests
 			return hasItem != null? (T)hasItem.GetItem(): default(T);
 
 		}
+
+        public void GetResults(ICollection<Request> results)
+        {
+            results.AddRange(m_requests);
+        }
 
 		public void GetResultItems<T>(ICollection<T> results)
 		{

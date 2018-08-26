@@ -361,8 +361,11 @@ namespace BeatThat.Requests
                     }
                     else
                     {
+                        // We don't have a handler for the response but
+                        // if there's any hint that it's json, try to process it as json
                         var ctype = this.www.GetResponseHeader("content-type");
-                        if (ctype == null || ctype.IndexOf("json", StringComparison.Ordinal) == -1)
+                        if ((ctype == null || ctype.IndexOf("json", StringComparison.Ordinal) == -1)
+                            && !this.url.EndsWith("json", StringComparison.Ordinal))
                         {
                             this.error = "No item reader set and response is not json";
                             return false;

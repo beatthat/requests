@@ -1,87 +1,31 @@
 ﻿using System;
-using BeatThat.Requests;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Example_WebRequests : MonoBehaviour {
-
-    public string m_imageURL;
-    public Text m_imageURLText;
-    public RawImage m_image;
-
-    public string m_loadedImageUrl;
-
-    public const string DOG_API = "https://dog.ceo/api/breeds/image/random";
-
-	[Serializable] struct DogItem
+namespace BeatThat.Requests.Examples
+{
+    public class Example_WebRequests : MonoBehaviour
     {
-        public string status;
-        public string message; // this dog api happens to store the image url in a property called 'message'
-    }
+        public WebImage m_webImage;
 
-    private void Start()
-    {
-        UpdateData(null);
-        UpdateImage(null);
-        GetNewDog();
-    }
-
-    public void GetNewDog()
-    {
-        new WebRequest<DogItem>(DOG_API).Execute(result =>
+        void Start()
         {
-            if(result.hasError) {
-                Debug.LogError("error loading dog data:" + result.error);
-                return;
-            }
-
-            UpdateData(result.item.message); 
-        });
-    }
-
-    private void UpdateData(string dogUrl)
-    {
-        m_imageURL = dogUrl;
-        m_imageURLText.text = string.Format("Image Url: {0}", dogUrl?? "none");
-        if(!string.IsNullOrEmpty(m_imageURL) && m_imageURL != m_loadedImageUrl) {
-            LoadImage();
-        }
-    }
-
-    private void LoadImage()
-    {
-        if (string.IsNullOrEmpty(m_imageURL))
-        {
-            return;
+            m_webImage = (m_webImage != null) ? m_webImage : GetComponentInChildren<WebImage>();
+            m_webImage.LoadAndDisplayImage(null);
+            GetNewDog();
         }
 
-        m_loadedImageUrl = m_imageURL;
-        UpdateData(m_imageURL); // will disable the load button
-
-        new WebRequest<Texture2D>(m_imageURL).Execute(result =>
+        public void GetNewDog()
         {
-            if (result.hasError)
+            new WebRequest<DogAPI.DogItem>(DogAPI.END_POINT).Execute(result =>
             {
-                Debug.LogError("error loading dog image:" + result.error);
-                return;
-            }
+                if (result.hasError)
+                {
+                    Debug.LogError("error loading dog data:" + result.error);
+                    return;
+                }
 
-            UpdateImage(result.item);
-        });
-    }
-
-    private void UpdateImage(Texture2D image)
-    {
-        if (image == null)
-        {
-            m_image.enabled = false;
-            return;
+                m_webImage.LoadAndDisplayImage(result.item.message);
+            });
         }
-
-        m_image.texture = image;
-        m_image.enabled = true;
     }
-
-
-
 }

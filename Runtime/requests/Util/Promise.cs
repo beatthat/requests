@@ -224,7 +224,8 @@ namespace BeatThat.Requests
 
 	public class Promise : Promise<object> 
 	{
-		public Promise(ExecWithCancelAndAttachDelegate execDel) : base(execDel) {}
+        public Promise(ExecWithCancelAndAttachDelegate execDel) : base(execDel) {}
+        public Promise(ExecDelegate execDel) : base(execDel) { }
 	}
 
 	public static class PromiseRequest

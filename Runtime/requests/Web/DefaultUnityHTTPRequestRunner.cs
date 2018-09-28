@@ -108,7 +108,7 @@ namespace BeatThat.Requests
                                    + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
                                    + ((m_logResponses)? Response2LogText(www): ""));
 				}
-				req.OnError(www.error);
+                req.OnError(www.responseCode == 401 ? Response2LogText(www) : www.error);
 				yield break;
 			}
 

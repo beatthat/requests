@@ -78,6 +78,13 @@ namespace BeatThat.Requests
 		public object GetItem() { return this.item; } 
 		public T item { get; private set; }
 
+        public static Request<T> Fail(string error = null, Action<Request<T>> callback = null, float execDuration = 0f)
+        {
+            var r = new LocalRequest<T>(error, execDuration);
+            r.Execute(callback);
+            return r;
+        }
+
 		public void Execute(Action<Request<T>> callback) 
 		{
 			if(callback == null) {

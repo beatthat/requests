@@ -11,6 +11,17 @@ namespace BeatThat.Requests
     public class WebFileDownloadRequest : WebRequest
     {
         public WebFileDownloadRequest(
+            string url,
+            string file,
+            HttpVerb httpVerb = HttpVerb.GET,
+            bool downloadToTmpFile = true,
+            float delay = 0f,
+            UnityHTTPRequestRunner runner = null)
+            : this(url, new FileInfo(file), httpVerb, downloadToTmpFile, delay, runner)
+        {
+        }
+
+        public WebFileDownloadRequest(
             string url, 
             FileInfo file, 
             HttpVerb httpVerb = HttpVerb.GET, 

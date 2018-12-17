@@ -1,4 +1,5 @@
 using System.Collections;
+using BeatThat.Defines;
 using BeatThat.NetworkNotifications;
 using BeatThat.Service;
 using UnityEngine;
@@ -10,36 +11,57 @@ namespace BeatThat.Requests
     /// <summary>
     /// TODO: make all (or most) WWWRequest's safe to dispose immediately following completion. Will require different handling of downloaded textures, audioclips, etc.
     /// </summary>
+    [EditDefine(new string[] {
+        "WEBREQUEST_LOG_SEND_IN_EDITOR",
+        "WEBREQUEST_LOG_SEND_DISABLED", 
+        "WEBREQUEST_LOG_SEND_ON_DEVICE"
+    }, "enables/disables logging on send. Default is to log in Unity Editor but not on devices.")]
+
+    [EditDefine(new string[] {
+        "WEBREQUEST_LOG_COMPLETE_IN_EDITOR",
+        "WEBREQUEST_LOG_COMPLETE_DISABLED",
+        "WEBREQUEST_LOG_COMPLETE_ON_DEVICE"
+    }, "enables/disables logging on complete. Default is to log in Unity Editor but not on devices.")]
+
+    [EditDefine(new string[] {
+        "WEBREQUEST_LOG_RESPONSES_IN_EDITOR",
+        "WEBREQUEST_LOG_RESPONSES_DISABLED",
+        "WEBREQUEST_LOG_RESPONSES_ON_DEVICE"
+    }, "enables/disables logging of responses. Default is to log in Unity Editor but not on devices.")]
+
+    [EditDefine("WEBREQUEST_LOG_ERRORS_DISABLED",
+                "enables/disables logging of errors. Default is to log in Unity Editor but not on devices.")]
     [RegisterService(typeof(UnityHTTPRequestRunner))]
 	public class DefaultUnityHTTPRequestRunner : MonoBehaviour, UnityHTTPRequestRunner 
 	{
 		public bool m_logSend = 
-#if WEBREQUEST_LOG_SEND || (UNITY_EDITOR && !WEBREQUEST_LOG_SEND_DISABLED)
+#if WEBREQUEST_LOG_SEND_ON_DEVICE || (UNITY_EDITOR && !WEBREQUEST_LOG_SEND_DISABLED)
             true;
 #else
             false;
 #endif
         
 		public bool m_logCompleted = 
-#if WEBREQUEST_LOG_COMPLETE || (UNITY_EDITOR && !WEBREQUEST_LOG_COMPLETE_DISABLED)
+#if WEBREQUEST_LOG_COMPLETE_ON_DEVICE || (UNITY_EDITOR && !WEBREQUEST_LOG_COMPLETE_DISABLED)
             true;
 #else
             false;
 #endif
         
         public bool m_logResponses =
-#if WEBREQUEST_LOG_RESPONSES || (UNITY_EDITOR && !WEBREQUEST_LOG_RESPONSES_DISABLED)
+#if WEBREQUEST_LOG_RESPONSES_ON_DEVICE || (UNITY_EDITOR && !WEBREQUEST_LOG_RESPONSES_DISABLED)
             true;
 #else
             false;
 #endif
 
-		public bool m_disableLogError = 
-#if WEBREQUEST_DISABLE_LOG_ERROR 
+        public bool m_logErrors = 
+#if !WEBREQUEST_LOG_ERRORS_DISABLED
             true;
 #else
-        false;
+            false;
 #endif
+
         
 		public void Execute(UnityHTTPRequest req)
 		{
@@ -102,7 +124,7 @@ namespace BeatThat.Requests
             }
 
 			if(!string.IsNullOrEmpty(www.error)) {
-				if(!m_disableLogError) {
+				if(m_logErrors) {
 					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error executing " + www.method 
                                    + " '" + www.url + "': " + www.error 
                                    + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
@@ -113,7 +135,7 @@ namespace BeatThat.Requests
 			}
 
 			if(!www.isDone) {
-				if(!m_disableLogError) {
+				if(m_logErrors) {
 					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " req for url failed to complete [" + www.url + "] [" 
                                    + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
                                    + ((m_logResponses) ? Response2LogText(www) : ""));
@@ -124,7 +146,7 @@ namespace BeatThat.Requests
 
 			string error;
 			if(www.IsError(out error)) {
-                if (!m_disableLogError) {
+                if (m_logErrors) {
                     Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error response executing " + www.method
                                    + " '" + www.url + "': " + error
                                    + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"

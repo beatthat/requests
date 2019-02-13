@@ -30,6 +30,15 @@ namespace BeatThat.Requests
             this.runner = runner;
         }
 
+        public void ToRawUpload(byte[] data, string contentType, HttpVerb verb = HttpVerb.POST)
+        {
+            this.httpVerb = verb;
+            this.uploadHandler = new UploadHandlerRaw(data);
+            this.uploadHandler.contentType = contentType;
+        }
+
+        private UploadHandler uploadHandler { get; set; }
+
 		public HttpVerb httpVerb { get; protected set; }
 
 		public long GetResponseCode()
@@ -57,17 +66,39 @@ namespace BeatThat.Requests
 				this.www = UnityWebRequest.Get(this.url);
 				break;
 			case HttpVerb.POST:
-				if(this.form == null) {
-					ForcePost(); // TODO: shouldn't need a form to POST
+                if(this.uploadHandler !=  null) {
+                    PrepareRawUpload(this.uploadHandler, "POST");
+                }
+                else {
+                    if (this.form == null)
+                    {
+                        ForcePost(); // TODO: shouldn't need a form to POST
+                    }
+                    this.www = UnityWebRequest.Post(this.url, this.form);
 				}
-				this.www = UnityWebRequest.Post (this.url, this.form);
+				
 				break;
+            case HttpVerb.PUT:
+                    if(this.uploadHandler == null) {
+                        throw new NotSupportedException("PUT currently supported only with call to ToRawUpload, which should assign an UploadHandler for the request");
+                    }
+                    PrepareRawUpload(this.uploadHandler, "PUT");
+                    break;
 			default:
 				throw new NotSupportedException(this.httpVerb.ToString()); // add later
 			}
 
             CopyHeadersTo(this.www);
 		}
+
+        private void PrepareRawUpload(UploadHandler h, string method)
+        {
+            this.www = new UnityWebRequest();
+            this.www.url = this.url;
+            this.www.method = method;
+            this.www.downloadHandler = new DownloadHandlerBuffer();
+            this.www.uploadHandler = this.uploadHandler;
+        }
 
         protected void CopyHeadersTo(UnityWebRequest webRequest = null)
         {
@@ -85,6 +116,11 @@ namespace BeatThat.Requests
         }
 
 		public Action<WebRequest> prepareDelegate { get; set; }
+
+        public void SetContentType(string contentType)
+        {
+            SetHeader("Content-Type", contentType);
+        }
 
 		public void SetHeader(string name, string value)
 		{

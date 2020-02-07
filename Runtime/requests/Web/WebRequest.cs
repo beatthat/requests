@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using BeatThat.ConvertTypeExt;
 using BeatThat.Pools;
 using BeatThat.Serializers;
@@ -35,6 +36,11 @@ namespace BeatThat.Requests
             this.httpVerb = verb;
             this.uploadHandler = new UploadHandlerRaw(data);
             this.uploadHandler.contentType = contentType;
+        }
+
+        public void SetBody(string body, string contentType="application/json", HttpVerb verb = HttpVerb.POST)
+        {
+            ToRawUpload(Encoding.UTF8.GetBytes(body), contentType, verb);
         }
 
         private UploadHandler uploadHandler { get; set; }

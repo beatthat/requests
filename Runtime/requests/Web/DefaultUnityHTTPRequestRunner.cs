@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Text;
 using BeatThat.Defines;
 using BeatThat.NetworkNotifications;
 using BeatThat.Service;
@@ -13,7 +14,7 @@ namespace BeatThat.Requests
     /// </summary>
     [EditDefine(new string[] {
         "WEBREQUEST_LOG_SEND_IN_EDITOR",
-        "WEBREQUEST_LOG_SEND_DISABLED", 
+        "WEBREQUEST_LOG_SEND_DISABLED",
         "WEBREQUEST_LOG_SEND_ON_DEVICE"
     }, "enables/disables logging on send. Default is to log in Unity Editor but not on devices.")]
 
@@ -32,22 +33,22 @@ namespace BeatThat.Requests
     [EditDefine("WEBREQUEST_LOG_ERRORS_DISABLED",
                 "enables/disables logging of errors. Default is to log in Unity Editor but not on devices.")]
     [RegisterService(typeof(UnityHTTPRequestRunner))]
-	public class DefaultUnityHTTPRequestRunner : MonoBehaviour, UnityHTTPRequestRunner 
-	{
-		public bool m_logSend = 
+    public class DefaultUnityHTTPRequestRunner : MonoBehaviour, UnityHTTPRequestRunner
+    {
+        public bool m_logSend =
 #if WEBREQUEST_LOG_SEND_ON_DEVICE || (UNITY_EDITOR && !WEBREQUEST_LOG_SEND_DISABLED)
             true;
 #else
             false;
 #endif
-        
-		public bool m_logCompleted = 
+
+        public bool m_logCompleted =
 #if WEBREQUEST_LOG_COMPLETE_ON_DEVICE || (UNITY_EDITOR && !WEBREQUEST_LOG_COMPLETE_DISABLED)
             true;
 #else
             false;
 #endif
-        
+
         public bool m_logResponses =
 #if WEBREQUEST_LOG_RESPONSES_ON_DEVICE || (UNITY_EDITOR && !WEBREQUEST_LOG_RESPONSES_DISABLED)
             true;
@@ -55,143 +56,171 @@ namespace BeatThat.Requests
             false;
 #endif
 
-        public bool m_logErrors = 
+        public bool m_logErrors =
 #if !WEBREQUEST_LOG_ERRORS_DISABLED
             true;
 #else
             false;
 #endif
 
-        
-		public void Execute(UnityHTTPRequest req)
-		{
-			req.OnQueued();
-			StartCoroutine(DoExecute(req));
-		}
+
+        public void Execute(UnityHTTPRequest req)
+        {
+            req.OnQueued();
+            StartCoroutine(DoExecute(req));
+        }
 
 #pragma warning disable 414
         private static WaitForEndOfFrame WAIT_FOR_END_OF_FRAME = new WaitForEndOfFrame();
 #pragma warning restore 414
 
-		private IEnumerator DoExecute(UnityHTTPRequest req)
-		{
-			if(req.delay > 0f) {
-				yield return new WaitForSeconds(req.delay);
-			}
+        private IEnumerator DoExecute(UnityHTTPRequest req)
+        {
+            if (req.delay > 0f)
+            {
+                yield return new WaitForSeconds(req.delay);
+            }
 
-			if(req.status == RequestStatus.CANCELLED || req.status == RequestStatus.DONE) {
-				yield break;
-			}
+            if (req.status == RequestStatus.CANCELLED || req.status == RequestStatus.DONE)
+            {
+                yield break;
+            }
 
-			req.Prepare();
+            req.Prepare();
 
-			var www = req.www;
+            var www = req.www;
 
 #pragma warning disable 219
             var token = www.SendWebRequest();
 #pragma warning restore 219
 
-			var timeStart = Time.realtimeSinceStartup;
+            var timeStart = Time.realtimeSinceStartup;
 
-			if(m_logSend) {
-				Debug.Log("[" + Time.frameCount + "] " + GetType() + " executing " + www.method + " '" + www.url + "'");
-			}
+            if (m_logSend)
+            {
+                if ((req.httpVerb == HttpVerb.POST || req.httpVerb == HttpVerb.PUT)
+                    && req.www.uploadHandler is UploadHandlerRaw && req.www.uploadHandler.contentType == "application/json")
+                {
+                    Debug.Log("[" + Time.frameCount + "] " + GetType() + " executing " + www.method + " '" + www.url + "'\n"
+                        + Encoding.UTF8.GetString((req.www.uploadHandler as UploadHandlerRaw).data));
+                }
+                else
+                {
+                    Debug.Log("[" + Time.frameCount + "] " + GetType() + " executing " + www.method + " '" + www.url + "'");
+                }
+            }
 
-			req.OnSent();
+            req.OnSent();
 
-            if(!www.uri.IsFile) {
+            if (!www.uri.IsFile)
+            {
                 NetworkNotification.WebRequestStarted(www);
             }
 
 #if UNITY_IOS
-			// TODO: Cannot be interrupted by WWW.Dispose() on iOS. Need to retest if this is necessary with WebRequest
-			while (req.status == RequestStatus.IN_PROGRESS && !www.isDone) { 
-                yield return WAIT_FOR_END_OF_FRAME; 
-			}
+            // TODO: Cannot be interrupted by WWW.Dispose() on iOS. Need to retest if this is necessary with WebRequest
+            while (req.status == RequestStatus.IN_PROGRESS && !www.isDone)
+            {
+                yield return WAIT_FOR_END_OF_FRAME;
+            }
 #else
 			yield return token; 
 #endif
 
-			if(req.status == RequestStatus.CANCELLED) {
-				yield break;
-			}
+            if (req.status == RequestStatus.CANCELLED)
+            {
+                yield break;
+            }
 
-            if(www.isNetworkError) {
+            if (www.isNetworkError)
+            {
                 NetworkNotification.WebRequestNetworkError(www);
             }
-            else if(!www.uri.IsFile){
+            else if (!www.uri.IsFile)
+            {
                 NetworkNotification.WebRequestReceivedResponse(www);
             }
 
-			if(!string.IsNullOrEmpty(www.error)) {
-				if(m_logErrors) {
-					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error executing " + www.method 
-                                   + " '" + www.url + "': " + www.error 
+            if (!string.IsNullOrEmpty(www.error))
+            {
+                if (m_logErrors)
+                {
+                    Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error executing " + www.method
+                                   + " '" + www.url + "': " + www.error
                                    + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
-                                   + ((m_logResponses)? Response2LogText(www): ""));
-				}
+                                   + ((m_logResponses) ? Response2LogText(www) : ""));
+                }
                 req.OnError(www.responseCode == 401 ? Response2LogText(www) : www.error);
-				yield break;
-			}
+                yield break;
+            }
 
-			if(!www.isDone) {
-				if(m_logErrors) {
-					Debug.LogError("[" + Time.frameCount + "] " + GetType() + " req for url failed to complete [" + www.url + "] [" 
+            if (!www.isDone)
+            {
+                if (m_logErrors)
+                {
+                    Debug.LogError("[" + Time.frameCount + "] " + GetType() + " req for url failed to complete [" + www.url + "] ["
                                    + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
                                    + ((m_logResponses) ? Response2LogText(www) : ""));
-				}
-				req.OnError("failed to complete request");
-				yield break;
-			}
+                }
+                req.OnError("failed to complete request");
+                yield break;
+            }
 
-			string error;
-			if(www.IsError(out error)) {
-                if (m_logErrors) {
+            string error;
+            if (www.IsError(out error))
+            {
+                if (m_logErrors)
+                {
                     Debug.LogError("[" + Time.frameCount + "] " + GetType() + " error response executing " + www.method
                                    + " '" + www.url + "': " + error
                                    + " [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
                                    + ((m_logResponses) ? Response2LogText(www) : ""));
                 }
 
-				req.OnError(error);
-				yield break;
-			}
+                req.OnError(error);
+                yield break;
+            }
 
-            if(m_logResponses) {
-                Debug.Log("[" + Time.frameCount + "] " + GetType() + " COMPLETED " + www.method + " '" + www.url 
+            if (m_logResponses)
+            {
+                Debug.Log("[" + Time.frameCount + "] " + GetType() + " COMPLETED " + www.method + " '" + www.url
                           + "' [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]"
                           + "\nresponse:\n" + Response2LogText(www));
             }
-			else if(m_logCompleted) {
-				Debug.Log("[" + Time.frameCount + "] " + GetType() + " COMPLETED " + www.method + " '" + www.url + "' [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]");
-			}
-				
-			req.OnDone();
-		}
+            else if (m_logCompleted)
+            {
+                Debug.Log("[" + Time.frameCount + "] " + GetType() + " COMPLETED " + www.method + " '" + www.url + "' [" + ((Time.realtimeSinceStartup - timeStart) * 1000) + "ms]");
+            }
+
+            req.OnDone();
+        }
 
 
         private string Response2LogText(UnityWebRequest www)
         {
             var contentType = www.GetResponseHeader("content-type");
-            if(string.IsNullOrEmpty(contentType)) {
+            if (string.IsNullOrEmpty(contentType))
+            {
                 return "[no content type]";
             }
-            if(contentType.IndexOf("text", System.StringComparison.Ordinal) == -1
+            if (contentType.IndexOf("text", System.StringComparison.Ordinal) == -1
                && contentType.IndexOf("json", System.StringComparison.Ordinal) == -1
                && contentType.IndexOf("xml", System.StringComparison.Ordinal) == -1
-              ){
+              )
+            {
                 return contentType;
             }
 
 
             var dh = www.downloadHandler as DownloadHandlerBuffer;
-            if(dh == null) {
+            if (dh == null)
+            {
                 return "content-length: " + www.GetResponseHeader("content-length");
             }
 
             return dh.text;
         }
-	}
+    }
 
 }
 

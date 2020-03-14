@@ -263,7 +263,7 @@ namespace BeatThat.Requests
 		public void OnDone()
 		{
 			if(this.status != RequestStatus.IN_PROGRESS) {
-				Debug.LogError("[" + Time.frameCount + "] " + GetType() + "::OnDone called in inva status " + this.status + " url=" + this.url);
+				Debug.LogError("[" + Time.frameCount + "] " + GetType() + "::OnDone called in invalid status " + this.status + " url=" + this.url);
 				return;
 			}
 

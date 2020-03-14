@@ -14,8 +14,9 @@ namespace BeatThat.Requests
 
 		string url { get;  }
 		WWWForm form { get; set; }
+        HttpVerb httpVerb { get; }
 
-		UnityWebRequest www { get; }
+        UnityWebRequest www { get; }
 
 		void SetHeader(string name, string value);
 

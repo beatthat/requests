@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using BeatThat.ConvertTypeExt;
 using BeatThat.Pools;
 using BeatThat.Serializers;
 using BeatThat.Service;
+using BeatThat.TypeUtil;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -412,16 +414,19 @@ namespace BeatThat.Requests
                             this.error = "No item reader set and response is not json";
                             return false;
                         }
-
-                        var r = StaticObjectPool<JsonReader<T>>.Get();
-                        try
+                        Serializer<T> reader;
+                        string err;
+                        if(!Serializers.GetDefaultSerializer<T>(out reader, out err))
                         {
-                            this.item = r.ReadOne(s);
+                            this.error = err;
+                            return false;
                         }
-                        finally
-                        {
-                            StaticObjectPool<JsonReader<T>>.Return(r);
-                        }
+                        //var r = typeof(T).IsArray ?
+                        //       // built in unity JsonUtility can't handle arrays
+                        //       // TODO: make array-handling serializer discoverable
+                        //       (Reader<T>)BeatThat.Serializers.Newtonsoft.JsonNetSerializer<T>.SHARED_INSTANCE
+                        //       : JsonSerializer<T>.SHARED_INSTANCE;
+                        this.item = reader.ReadOne(s);
                     }
 
                 }
@@ -437,15 +442,60 @@ namespace BeatThat.Requests
                 
 #endif
 
-                this.error = "format";
-
-#if UNITY_EDITOR
-                throw e;
-#else
+                this.error = e.Message;
                 return false;
-#endif
             }
         }
+
+        
+    }
+
+    static class Serializers
+    {
+        public static bool GetDefaultSerializer<T>(out Serializer<T> result, out string error)
+        {
+            if (!typeof(T).IsArray)
+            {
+                result = JsonSerializer<T>.SHARED_INSTANCE;
+                error = null;
+                return true;
+            }
+            if (!DEFAULT_ARRAY_SERIALIZER_HAS_DONE_LOAD)
+            {
+                DEFAULT_ARRAY_SERIALIZER_HAS_DONE_LOAD = true;
+                try {
+                    var opts = TypeUtils.FindTypesWithAttribute<CanReadAndWriteArraysAttribute>();
+                    var facType = opts != null && opts.Length > 0
+                        ? Array.Find(opts, x => typeof(SerializerFactory).IsAssignableFrom(x.type))
+                        : null;
+                    if (facType != default(TypeAndAttribute) && facType.type != null)
+                    {
+                        ConstructorInfo c = facType.type.GetConstructor(new Type[] { });
+                        DEFAULT_ARRAY_SERIALIZER_FACTORY = c.Invoke(new object[] { }) as SerializerFactory;
+                    }
+                }
+                catch(Exception e)
+                {
+                    Debug.LogError(e);
+                }
+            }
+            if(DEFAULT_ARRAY_SERIALIZER_FACTORY != null)
+            {
+                result = DEFAULT_ARRAY_SERIALIZER_FACTORY.Create<T>();
+                error = null;
+                return true;
+            }
+#if UNITY_EDITOR || DEBUG_UNSTRIP
+            Debug.LogWarning("No serializer found that can handle array types like "
+                + typeof(T) + ". Possible fix: npm install --save @beatthat/serializers-netwonsoft");
+#endif
+            result = null;
+            error = "No default serializer can handle array types like " + typeof(T);
+            return false;
+        }
+
+        private static bool DEFAULT_ARRAY_SERIALIZER_HAS_DONE_LOAD = false;
+        private static SerializerFactory DEFAULT_ARRAY_SERIALIZER_FACTORY;
     }
 }
 

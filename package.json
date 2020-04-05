@@ -57,6 +57,7 @@
     "request-interfaces": "beatthat/request-interfaces#semver:^1.0.0",
     "serializers": "beatthat/serializers#semver:^1.0.0",
     "services": "beatthat/services#semver:^1.0.0",
+    "type-utils": "github:beatthat/type-utils#semver:^1.0.0",
     "unity-npm-utils": "github:beatthat/unity-npm-utils#semver:^1.0.0"
   },
   "devDependencies": {},

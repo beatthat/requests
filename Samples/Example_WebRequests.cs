@@ -23,7 +23,6 @@ namespace BeatThat.Requests.Examples
                     Debug.LogError("error loading dog data:" + result.error);
                     return;
                 }
-
                 m_webImage.LoadAndDisplayImage(result.item.message);
             });
         }

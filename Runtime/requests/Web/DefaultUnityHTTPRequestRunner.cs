@@ -1,8 +1,9 @@
-using System.Collections;
-using System.Text;
 using BeatThat.Defines;
 using BeatThat.NetworkNotifications;
 using BeatThat.Service;
+using System.Collections;
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -70,6 +71,21 @@ namespace BeatThat.Requests
             StartCoroutine(DoExecute(req));
         }
 
+        public void Use(BeforeSendMiddleware middleware)
+        {
+            if(m_middleware == null) {
+                m_middleware = new List<BeforeSendMiddleware>();
+            }
+            m_middleware.Add(middleware);
+        }
+
+        public bool Remove(BeforeSendMiddleware middleware)
+        {
+            return m_middleware != null
+                ? m_middleware.Remove(middleware)
+                : false;
+        }
+
 #pragma warning disable 414
         private static WaitForEndOfFrame WAIT_FOR_END_OF_FRAME = new WaitForEndOfFrame();
 #pragma warning restore 414
@@ -87,7 +103,9 @@ namespace BeatThat.Requests
             }
 
             req.Prepare();
-
+            if(m_middleware != null) {
+                req.ApplyMiddleware(m_middleware);
+            }
             var www = req.www;
 
 #pragma warning disable 219
@@ -220,6 +238,8 @@ namespace BeatThat.Requests
 
             return dh.text;
         }
+
+        private List<BeforeSendMiddleware> m_middleware;
     }
 
 }

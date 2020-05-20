@@ -9,7 +9,19 @@ namespace BeatThat.Requests
     {
         public static void SetHeaderAuthBearer(this UnityHTTPRequest request, string accessToken)
         {
-            request.www.SetRequestHeader(
+            if(request == null) {
+                #if UNITY_EDITOR|| DEBUG_UNSTRIP
+                Debug.LogWarning("["+ Time.frameCount + "] SetHeaderAuthBearer with a null request");
+                #endif
+                return;
+            }
+            if(accessToken == null) {
+                #if UNITY_EDITOR|| DEBUG_UNSTRIP
+                Debug.LogWarning("["+ Time.frameCount + "] SetHeaderAuthBearer with a null accessToken");
+                #endif
+                return;
+            }
+            request.SetHeader(
                 "Authorization",
                 string.Format("Bearer {0}", accessToken));
         }

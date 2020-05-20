@@ -52,56 +52,54 @@ namespace BeatThat.Requests {
         /// Ensures that url (WWWForm) form are ready to send.
         /// Base implementation calls the action 'prepareDelegate' (if it is not null);
         /// </summary>
-        virtual public void Prepare () {
+        public void Prepare () {
             if (this.prepareDelegate != null) {
                 this.prepareDelegate (this);
             }
+            this.www = PrepareRequest();
+            CopyHeadersTo (this.www);
+        }
 
+        virtual protected UnityWebRequest PrepareRequest() 
+        {
             switch (this.httpVerb) {
                 case HttpVerb.GET:
-                    this.www = UnityWebRequest.Get (this.url);
-                    break;
+                    return UnityWebRequest.Get (this.url);
                 case HttpVerb.POST:
                     if (this.uploadHandler != null) {
-                        PrepareRawUpload (this.uploadHandler, "POST");
+                        return PrepareRawUpload (this.uploadHandler, "POST");
                     } else {
                         if (this.form == null) {
                             ForcePost (); // TODO: shouldn't need a form to POST
                         }
-                        this.www = UnityWebRequest.Post (this.url, this.form);
+                        return UnityWebRequest.Post (this.url, this.form);
                     }
-
-                    break;
                 case HttpVerb.PUT:
                     if (this.uploadHandler == null) {
                         throw new NotSupportedException ("PUT currently supported only with call to ToRawUpload, which should assign an UploadHandler for the request");
                     }
-                    PrepareRawUpload (this.uploadHandler, "PUT");
-                    break;
+                    return PrepareRawUpload (this.uploadHandler, "PUT");
                 default:
                     throw new NotSupportedException (this.httpVerb.ToString ()); // add later
             }
-
-            CopyHeadersTo (this.www);
         }
 
-        private void PrepareRawUpload (UploadHandler h, string method) {
-            this.www = new UnityWebRequest ();
-            this.www.url = this.url;
-            this.www.method = method;
-            this.www.downloadHandler = new DownloadHandlerBuffer ();
-            this.www.uploadHandler = this.uploadHandler;
+        private UnityWebRequest PrepareRawUpload (UploadHandler h, string method) {
+            var req = new UnityWebRequest ();
+            req.url = this.url;
+            req.method = method;
+            req.downloadHandler = new DownloadHandlerBuffer ();
+            req.uploadHandler = this.uploadHandler;
+            return req;
         }
 
-        protected void CopyHeadersTo (UnityWebRequest webRequest = null) {
-            if (webRequest == null) {
-                webRequest = this.www;
+        private void CopyHeadersTo (UnityWebRequest webRequest = null) {
+            if (m_headers == null) {
+                return;
             }
-
-            if (m_headers != null) {
-                foreach (var h in m_headers) {
-                    webRequest.SetRequestHeader (h.Key, h.Value);
-                }
+            webRequest = webRequest ?? this.www;
+            foreach (var h in m_headers) {
+                webRequest.SetRequestHeader (h.Key, h.Value);
             }
         }
 
@@ -240,7 +238,7 @@ namespace BeatThat.Requests {
 
         virtual protected void DoOnError () { }
 
-        public UnityWebRequest www { get; protected set; }
+        public UnityWebRequest www { get; private set; }
 
         public UnityHTTPRequestRunner runner {
             get {
@@ -284,11 +282,12 @@ namespace BeatThat.Requests {
             RequestExecutionPool<T>.Get ().Execute (this, callback, callbackOnCancelled);
         }
 
-        override public void Prepare () {
-            base.Prepare ();
+        override protected UnityWebRequest PrepareRequest () {
+            var req = base.PrepareRequest ();
             if (typeof (Texture).IsAssignableFrom (typeof (T))) {
-                www.downloadHandler = new DownloadHandlerTexture ();
+                req.downloadHandler = new DownloadHandlerTexture ();
             }
+            return req;
         }
 
         sealed override protected void AfterDisposeWWW () {

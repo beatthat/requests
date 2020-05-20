@@ -38,23 +38,21 @@ namespace BeatThat.Requests
         protected FileInfo file { get; private set; }
         protected FileInfo downloadFile { get; private set; }
 
-        override public void Prepare()
+        override protected UnityWebRequest PrepareRequest()
         {
-            this.downloadFile = this.downloadToTmpFile ?
-                new FileInfo(this.file.FullName + "." + Guid.NewGuid().ToString()) :
-                this.file;
-            
+            this.downloadFile = this.downloadToTmpFile 
+                ? new FileInfo(this.file.FullName + "." + Guid.NewGuid().ToString())
+                : this.file;
             if (!this.downloadFile.Directory.Exists)
             {
                 this.downloadFile.Directory.Create();
             }
-
-            this.www = new UnityWebRequest(this.url);
-            www.method = this.httpVerb.ToUnityWebRequestVerb();
+            var req = new UnityWebRequest(this.url);
+            req.method = this.httpVerb.ToUnityWebRequestVerb();
             var dh = new DownloadHandlerFile(this.downloadFile.FullName);
             dh.removeFileOnAbort = true;
-            www.downloadHandler = dh;
-            CopyHeadersTo(this.www);
+            req.downloadHandler = dh;
+            return req;
         }
 
         protected void MoveDownloadFileToTarget()

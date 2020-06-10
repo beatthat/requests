@@ -215,7 +215,7 @@ namespace BeatThat.Requests {
         public bool isNetworkError {
             get {
 #if UNITY_2017_1_OR_NEWER
-                return this.www.isNetworkError;
+                return this.www != null && this.www.isNetworkError;
 #else
                 // terrible hack
                 return this.www != null && !string.IsNullOrEmpty (this.www.error) && this.www.error.IndexOf ("No Internet Connection") >= 0;

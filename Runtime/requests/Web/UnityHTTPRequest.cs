@@ -40,6 +40,8 @@ namespace BeatThat.Requests
 
         UnityWebRequest www { get; }
 
+        UnityWebRequest GetRequestEnsureHeaders();
+
 		void SetHeader(string name, string value);
 
 		void OnQueued();

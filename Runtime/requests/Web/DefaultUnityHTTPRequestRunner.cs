@@ -106,7 +106,7 @@ namespace BeatThat.Requests
             if(m_middleware != null) {
                 req.ApplyMiddleware(m_middleware);
             }
-            var www = req.www;
+            var www = req.GetRequestEnsureHeaders();
 
 #pragma warning disable 219
             var token = www.SendWebRequest();

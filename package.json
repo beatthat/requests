@@ -1,7 +1,7 @@
 {
   "name": "requests",
   "scope": "beatthat",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "A Request is an async op that may succeed, fail or be cancelled. Requests may also retrieve an item of arbitrary type.",
   "main": "index.js",
   "repository": {

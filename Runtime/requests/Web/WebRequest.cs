@@ -188,6 +188,9 @@ namespace BeatThat.Requests
 
         public float delay { get; set; }
         public string url { get; set; }
+
+        override public string loggingName => this.url;
+
         public WWWForm form { get; set; }
 
         public void ForcePost()

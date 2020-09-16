@@ -8,7 +8,7 @@ namespace BeatThat.Requests
 {
     public abstract class ResourceItemRequest : RequestBase
     {
-        public ResourceItemRequest(string path, 
+        public ResourceItemRequest(string path,
                                    AssetObjToItemObjDelegate assetToItem,
                                    ResourceItemRequestRunner runner = null)
         {
@@ -22,6 +22,8 @@ namespace BeatThat.Requests
         protected ResourceRequest req { get; set; }
         public AssetObjToItemObjDelegate assetObjectToItemObj { get; protected set; }
         public string path { get; protected set; }
+
+        public override string loggingName => this.path;
 
 
         abstract public Type GetResourceType();
@@ -94,10 +96,12 @@ namespace BeatThat.Requests
         {
             get
             {
-                if(m_runner != null) {
+                if (m_runner != null)
+                {
                     return m_runner;
                 }
-                if((m_runner = Services.Require<ResourceItemRequestRunner>()) != null) {
+                if ((m_runner = Services.Require<ResourceItemRequestRunner>()) != null)
+                {
                     return m_runner;
                 }
                 this.runner4SingleExecution = new GameObject("ResourceLoader-" + this.path);
@@ -127,7 +131,7 @@ namespace BeatThat.Requests
             if (this.status != RequestStatus.IN_PROGRESS)
             {
 #if UNITY_EDITOR || DEBUG_UNSTRIP
-                Debug.LogWarning("[" + Time.frameCount + "] " + GetType() 
+                Debug.LogWarning("[" + Time.frameCount + "] " + GetType()
                                + "::OnDone called in status " + this.status + " path=" + this.path);
 #endif
                 return;
@@ -182,7 +186,7 @@ namespace BeatThat.Requests
             }
 
             SetItem(this.assetObjectToItemObj(GetAsset()));
-                    
+
             if (GetItem() == null)
             {
                 CompleteWithError("Failed to convert resource at path '" + this.path
@@ -202,7 +206,7 @@ namespace BeatThat.Requests
     {
         public delegate ItemType AssetToItemDelegate(ResourceType asset);
 
-        public ResourceItemRequest(string path, 
+        public ResourceItemRequest(string path,
                                    AssetToItemDelegate assetToItem,
                                    ResourceItemRequestRunner runner = null)
             : base(path, a => assetToItem(a as ResourceType), runner)
@@ -218,7 +222,8 @@ namespace BeatThat.Requests
         override public Type GetItemType() { return typeof(ItemType); }
         override public void SetAsset(UnityEngine.Object a)
         {
-            if(a == null) {
+            if (a == null)
+            {
                 this.asset = null;
                 return;
             }
@@ -230,21 +235,23 @@ namespace BeatThat.Requests
             }
         }
         override public UnityEngine.Object GetAsset() { return this.asset; }
-        override public void SetItem(object i) 
+        override public void SetItem(object i)
         {
-            if(i == null) {
+            if (i == null)
+            {
                 this.item = default(ItemType);
                 return;
             }
 
             ItemType asType;
-            if(i.TryConvertTo<ItemType>(out asType)) {
+            if (i.TryConvertTo<ItemType>(out asType))
+            {
                 this.item = asType;
             }
         }
 
-		public ResourceType asset { get; private set; }
-		public ItemType item { get; private set; }
+        public ResourceType asset { get; private set; }
+        public ItemType item { get; private set; }
 
 
         virtual public void Execute(Action<Request<ItemType>> callback)
@@ -258,16 +265,16 @@ namespace BeatThat.Requests
             RequestExecutionPool<ItemType>.Get().Execute(this, callback);
         }
 
-	}
+    }
 
-	public class ResourceItemRequest<T> : ResourceItemRequest<T, T> where T : UnityEngine.Object
-	{
-        public ResourceItemRequest(string path, 
-                                   ResourceItemRequestRunner runner = null) 
-            : base(path, ResourceItemRequest<T>.AssetToItem, runner) {}
+    public class ResourceItemRequest<T> : ResourceItemRequest<T, T> where T : UnityEngine.Object
+    {
+        public ResourceItemRequest(string path,
+                                   ResourceItemRequestRunner runner = null)
+            : base(path, ResourceItemRequest<T>.AssetToItem, runner) { }
 
-		private static T AssetToItem(T asset) { return asset; }
-	}
+        private static T AssetToItem(T asset) { return asset; }
+    }
 }
 
 

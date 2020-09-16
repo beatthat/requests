@@ -58,14 +58,11 @@ namespace BeatThat.Requests
 		private void ExecuteNext()
 		{
 			this.curRequestIndex++;
-
 			if(this.curRequestIndex >= m_requests.Count) {
 				CompleteRequest(RequestStatus.DONE);
 				return;
 			}
-
 			var req = m_requests[this.curRequestIndex];
-
 			switch(req.status) {
 			case RequestStatus.DONE:
 				if(req.hasError) {
@@ -74,20 +71,14 @@ namespace BeatThat.Requests
 				}
 				ExecuteNext();
 				return;
-
 			case RequestStatus.CANCELLED:
-				Debug.LogWarning("subrequest cancelled");
 				Cancel();
 				return;
-
 			case RequestStatus.QUEUED:
-			case RequestStatus.IN_PROGRESS: // already Executed
-
-//				Debug.LogError("[" + Time.frameCount + "] " + GetType() + "::ExecuteNext will proxy request " + req + " in status " + req.status);
-				req = new ProxyRequest(req); // TODO: pool?
+			case RequestStatus.IN_PROGRESS: 
+				req = new ProxyRequest(req);
 				break;
 			}
-
 			req.Execute(() => {
 				if(req.status != RequestStatus.DONE || !string.IsNullOrEmpty(req.error)) { // TODO: always fails on subrequest error, should FAIL_ON_ERROR be a default option w override
 					CompleteWithError(req.error);
